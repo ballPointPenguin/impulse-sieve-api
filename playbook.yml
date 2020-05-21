@@ -53,29 +53,32 @@
           - "{{ workdir }}/init-mongo-prod.js:/docker-entrypoint-initdb.d/init-mongo.js:ro"
         volumes_from:
           - impulse-db-data
+
     # STRAPI API
-    # - name: build strapi docker image
-    #   docker_image:
-    #     force_source: yes
-    #     name: impulse-strapi-api
-    #     source: build
-    #     build:
-    #       path: "{{ workdir }}"
-    #       pull: no
-    # - name: run api container
-    #   docker_container:
-    #     env_file: "{{ workdir }}/prod.env"
-    #     image: impulse-strapi-api
-    #     name: impulse-strapi-api
-    #     restart: yes
-    #     restart_policy: yes
-    #     env:
-    #       NODE_ENV: "production"
-    #       LETSENCRYPT_HOST: "api.impulsesieve.art"
-    #       MONGO_HOST: "mongodb://mongo/impulsesieve"
-    #       MONGO_PORT: "27017"
-    #       PORT: "1337"
-    #       VIRTUAL_HOST: "api.impulsesieve.art"
-    #       VIRTUAL_PORT: "1337"
-    #     links:
-    #       - "impulse-db:mongo"
+
+    - name: build strapi docker image
+      docker_image:
+        force_source: yes
+        name: impulse-strapi-api
+        source: build
+        build:
+          path: "{{ workdir }}"
+          pull: no
+
+    - name: run api container
+      docker_container:
+        env_file: "{{ workdir }}/prod.env"
+        image: impulse-strapi-api
+        name: impulse-strapi-api
+        restart: yes
+        restart_policy: yes
+        env:
+          NODE_ENV: "production"
+          LETSENCRYPT_HOST: "api.impulsesieve.art"
+          MONGO_HOST: "mongodb://mongo/impulsesieve"
+          MONGO_PORT: "27017"
+          PORT: "1337"
+          VIRTUAL_HOST: "api.impulsesieve.art"
+          VIRTUAL_PORT: "1337"
+        links:
+          - "impulse-db:mongo"
