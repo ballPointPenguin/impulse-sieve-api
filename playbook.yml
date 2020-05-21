@@ -1,0 +1,81 @@
+---
+- name: strapi deploy
+  hosts: west
+  remote_user: hank
+  vars:
+    branch: prod
+    homedir: "/home/{{ user }}"
+    org: ballPointPenguin
+    repo: impulse-sieve-api
+    user: hank
+    workdir: "{{ homedir }}/code/src/github.com/{{ org }}/{{ repo }}"
+
+  tasks:
+    - name: ensure workdir parent dir is present
+      file:
+        path: "{{ homedir }}/code/src/github.com/{{ org }}"
+        state: directory
+
+    - name: clone or update repo
+      git:
+        accept_hostkey: yes
+        dest: "{{ workdir }}"
+        key_file: "{{ homedir }}/.ssh/id_rsa"
+        repo: "git@github.com:{{ org }}/{{ repo }}.git"
+        update: yes
+        version: "{{ branch }}"
+
+    - name: copy env file to remote folder
+      copy:
+        src: prod.env
+        dest: "{{ workdir }}/prod.env"
+
+    # MONGO DATABASE
+
+    - name: copy init-mongo.js file to remote folder
+      copy:
+        src: init-mongo-prod.js
+        dest: "{{ workdir }}/init-mongo-prod.js"
+
+    - name: ensure mongo data volume
+      docker_container:
+        image: mongo:4.2
+        name: impulse-db-data
+        state: stopped
+
+    - name: run mongo container
+      docker_container:
+        env_file: "{{ workdir }}/prod.env"
+        image: mongo:4.2
+        name: impulse-db
+        restart_policy: always
+        volumes:
+          - "{{ workdir }}/init-mongo-prod.js:/docker-entrypoint-initdb.d/init-mongo.js:ro"
+        volumes_from:
+          - impulse-db-data
+    # STRAPI API
+    # - name: build strapi docker image
+    #   docker_image:
+    #     force_source: yes
+    #     name: impulse-strapi-api
+    #     source: build
+    #     build:
+    #       path: "{{ workdir }}"
+    #       pull: no
+    # - name: run api container
+    #   docker_container:
+    #     env_file: "{{ workdir }}/prod.env"
+    #     image: impulse-strapi-api
+    #     name: impulse-strapi-api
+    #     restart: yes
+    #     restart_policy: yes
+    #     env:
+    #       NODE_ENV: "production"
+    #       LETSENCRYPT_HOST: "api.impulsesieve.art"
+    #       MONGO_HOST: "mongodb://mongo/impulsesieve"
+    #       MONGO_PORT: "27017"
+    #       PORT: "1337"
+    #       VIRTUAL_HOST: "api.impulsesieve.art"
+    #       VIRTUAL_PORT: "1337"
+    #     links:
+    #       - "impulse-db:mongo"
