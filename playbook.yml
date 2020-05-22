@@ -71,13 +71,10 @@
         image: impulse-strapi-api
         name: impulse-strapi-api
         restart: yes
-        restart_policy: yes
+        restart_policy: always
         env:
           NODE_ENV: "production"
           LETSENCRYPT_HOST: "api.impulsesieve.art"
-          MONGO_HOST: "mongodb://mongo/impulsesieve"
-          MONGO_PORT: "27017"
-          PORT: "1337"
           VIRTUAL_HOST: "api.impulsesieve.art"
           VIRTUAL_PORT: "1337"
         links:

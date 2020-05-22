@@ -1,18 +1,25 @@
-version: '3'
+version: "3"
 
 services:
-  db:
+  mongo:
     container_name: impulse-sieve-db
     image: mongo
-    environment:
-      MONGO_INITDB_DATABASE: impulsesieve
-      MONGO_INITDB_ROOT_USERNAME: impulsesieve
-      MONGO_INITDB_ROOT_PASSWORD: secretsauce
+    env_file: dev.env
     ports:
-      - '27017-27019:27017-27019'
+      - "27017:27017"
     volumes:
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./init-mongo-dev.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - impulse-sieve-db-data:/data/db
+
+  strapi:
+    build: .
+    container_name: impulse-sieve-api
+    env_file: dev.env
+    image: impulse-strapi-api:dev
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "1337:1337"
 
 volumes:
   impulse-sieve-db-data:

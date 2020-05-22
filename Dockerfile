@@ -1,15 +1,16 @@
-FROM node:14-alpine
+FROM node:lts-alpine
 LABEL maintainer "Benjamin Rosas <ben@aliencyb.org>"
 
 ENV NODE_ENV production
 EXPOSE 1337
 WORKDIR /app
 
+RUN apk update && apk upgrade
 RUN apk add --no-cache --virtual .build \
-  g++ git make python
+  autoconf automake build-base libpng-dev nasm python
 
 COPY package*.json /app/
-RUN npm ci --silent
+RUN npm ci
 
 RUN apk del .build
 
