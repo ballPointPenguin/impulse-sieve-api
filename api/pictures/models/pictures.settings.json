@@ -21,12 +21,6 @@
     "name": {
       "type": "string"
     },
-    "description": {
-      "type": "richtext"
-    },
-    "alt": {
-      "type": "string"
-    },
     "location": {
       "type": "string"
     }
