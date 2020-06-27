@@ -1,29 +1,32 @@
 {
   "kind": "collectionType",
-  "collectionName": "pictures",
+  "collectionName": "pages",
   "info": {
-    "name": "pictures"
+    "name": "Page"
   },
   "options": {
     "increments": true,
     "timestamps": true
   },
   "attributes": {
-    "image": {
-      "model": "file",
-      "via": "related",
-      "allowedTypes": [
-        "images"
-      ],
-      "plugin": "upload",
+    "title": {
+      "type": "string",
       "required": true
     },
-    "name": {
-      "type": "string"
+    "path": {
+      "type": "string",
+      "regex": "[a-z0-9-]",
+      "unique": true,
+      "required": true,
+      "minLength": 3
+    },
+    "menuLink": {
+      "type": "boolean",
+      "default": true
     },
     "blocks": {
       "collection": "block",
-      "via": "pictures",
+      "via": "pages",
       "dominant": true
     },
     "order": {

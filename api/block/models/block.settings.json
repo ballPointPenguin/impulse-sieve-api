@@ -9,9 +9,6 @@
     "timestamps": true
   },
   "attributes": {
-    "location": {
-      "type": "string"
-    },
     "section": {
       "type": "enumeration",
       "enum": [
@@ -19,7 +16,8 @@
         "title",
         "body",
         "footer"
-      ]
+      ],
+      "default": "body"
     },
     "classNames": {
       "type": "string"
@@ -32,6 +30,21 @@
     },
     "content": {
       "type": "text"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    },
+    "pages": {
+      "via": "blocks",
+      "collection": "page"
+    },
+    "pictures": {
+      "via": "blocks",
+      "collection": "pictures"
+    },
+    "name": {
+      "type": "string"
     }
   }
 }
